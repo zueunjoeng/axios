@@ -5,53 +5,57 @@ function App() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [targetnum, setNumber] =useState(1);
 
   useEffect(() => {
-    // API 호출 함수
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/users');
-        //비동기 함수 > async가 무조건 있어야한다. 외부에서 값이 올때까지 랜더링을 기다리란 뜻** 빠지면 에러 계속 난다.
-        //await가 필수로 있어야한다. 원래 자바스크립트가 가진 친구.  
-        //외부데이터 get 가져온다.  내부데이터 post 가져온다. 
-        //외부데이터 다 올때까지 대기 전부 저장 완료 후 실행
-        setUsers(response.data); //랜더링 함수 users에 저장되고 있다
+        const response = await axios.get('https://jsonplaceholder.typicode.com/photos');       
+        setUsers(response.data);        
         setLoading(false);
       } catch (error) {
         setError(error);
         setLoading(false);
       }
     };
-
     fetchUsers();
-    // 함수가 비동기라 콜백함수로 fetchUsers():가 등장한다.
-    //비동기 함수 실행
-  }, []); //반드시 1회 실행
+  }, []);
 
-  //if (loading) return <p>Loading...</p>;
-  //if (error) return <p>Error: {error.message}</p>;
+  const uniqueAlbumIds = Array.from(new Set(users.map(item => item.albumId)));
+  // uniqueAlbumIds 데이터 array
+  // 클래스(붕어빵틀) 생성자 new 복제 (인스턴스 : 붕어빵 )
+  // 메서드 소속 클래스  
 
   return (
     <div className="App">
-      <h1>Users</h1> 
+      <h1>Users</h1>
+      <div>
+        {
+          uniqueAlbumIds.map(albumId => (
+            <button key={albumId} value={albumId} onClick={()=>{ setNumber(albumId); }}>
+              Album {albumId}
+            </button>
+          ))
+        }
+      </div>
       {
-        error && <p>Error: {error.message}</p> 
-        //에러일 때만 나간다
-      } 
-      {/* 삼항식 */}
-      {loading ? <p>Loading...</p> : 
-        <ul>
-          {users.map(user => (
-            <li key={user.id}>
-              <p>이름: {user.name}</p>
-              <p>이메일: {user.email}</p>
-              <p>주소: {`${user.address["street"]} ${user.address["suite"]} ${user.address["city"]}`}</p> 
-              {/* object인 address를 가져오는 방법 */}
+        error && <p>Error: {error.message}</p>
+      }
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+        <h2>전체개수 : {users.length}</h2>
+        <ul style={{display: "flex", flexWrap: "wrap"}}>
+          {users.filter(item => item.albumId === targetnum ).map(user => (
+            <li key={user.id} style={{width: "33%", listStyle: "none", padding: "0"}}>
+              <h2 style={{fontSize: "16px"}}>{user.title}</h2>
+              <img src={user.thumbnailUrl} alt={user.title} />
             </li>
           ))}
-        </ul> 
-      } 
-       
+        </ul>
+        </div>
+      )}
     </div>
   );
 }
