@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './app1/App1';
 import reportWebVitals from './reportWebVitals';
-
+import App3 from './RestApi'
+import Restfulapi from './RestfulApi'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <App />
+    <Restfulapi />
 );
 
 // If you want to start measuring performance in your app, pass a function
